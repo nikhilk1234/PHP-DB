@@ -1,9 +1,9 @@
 pipeline {
    agent none
   environment{
-       BUILD_SERVER_IP='ec2-user@172.31.5.0'
-       IMAGE_NAME='devopstrainer/java-mvn-privaterepos:php$BUILD_NUMBER'
-       DEPLOY_SERVER_IP='ec2-user@172.31.7.125'
+       BUILD_SERVER_IP='ec2-user@172.31.15.100'
+       IMAGE_NAME='nikhilkdevops/myrepo:php$BUILD_NUMBER'
+       //DEPLOY_SERVER_IP='ec2-user@172.31.7.125'
    }
     stages {          
         stage('BUILD DOCKERIMAGE AND PUSH TO DOCKERHUB') {
@@ -12,7 +12,7 @@ pipeline {
                 script{
                 sshagent(['slave2']) {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                echo "Packaging the apps"
+                //echo "Packaging the apps"
                 sh "scp -o StrictHostKeyChecking=no -r devconfig ${BUILD_SERVER_IP}:/home/ec2-user"
                 sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/devconfig/docker-script.sh'"
                 sh "ssh ${BUILD_SERVER_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/devconfig/"
@@ -23,7 +23,7 @@ pipeline {
             }
         }
         }
-      stage('DEPLOY DOCKER CONTAINER USING DOCKER_COMPOSE'){
+      /*stage('DEPLOY DOCKER CONTAINER USING DOCKER_COMPOSE'){
            agent any
            steps{
                script{
@@ -37,6 +37,6 @@ pipeline {
                     }
                }
            }
-       }
+       }*/
     }
 }
