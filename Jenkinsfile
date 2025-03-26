@@ -2,7 +2,7 @@ pipeline {
    agent none
   environment{
        BUILD_SERVER_IP='ec2-user@172.31.5.0'
-       IMAGE_NAME='devopstrainer/java-mvn-privaterepos:php$BUILD_NUMBER'
+       IMAGE_NAME='devopstrainer/java-mvn-privaterepos:sql$BUILD_NUMBER'
        DEPLOY_SERVER_IP='ec2-user@172.31.7.125'
    }
     stages {          
@@ -14,8 +14,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                 echo "Packaging the apps"
                 sh "scp -o StrictHostKeyChecking=no -r devconfig ${BUILD_SERVER_IP}:/home/ec2-user"
-                sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/devconfig/docker-script.sh'"
-                sh "ssh ${BUILD_SERVER_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/devconfig/"
+                sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/sql/docker-script.sh'"
+                sh "ssh ${BUILD_SERVER_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/sql/"
                 sh "ssh ${BUILD_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
                 sh "ssh ${BUILD_SERVER_IP} sudo docker push ${IMAGE_NAME}"
               }
